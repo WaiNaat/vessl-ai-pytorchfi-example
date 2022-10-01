@@ -204,7 +204,7 @@ for layer_num in layer_nums:
     vessl.log({'Misclassification_rate': orig_corrupt_diff_cnt / orig_correct_cnt * 100})
 
 # save log file
-f = open(os.path.join(args.output_path, '_'.join([model_name, dataset, seed]) + '.txt'), 'w')
+f = open(os.path.join(args.output_path, '_'.join([model_name, dataset, str(seed)]) + '.txt'), 'w')
 
 f.write(base_fi_model.print_pytorchfi_layer_summary())
 f.write(f'\n\n===== Result =====\nSeed: {seed}\nSpecific bit flip position: {bit_flip_pos}\n')
