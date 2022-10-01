@@ -21,7 +21,7 @@ vessl.init()
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='PyTorchFI single bit flip example code for vessl.ai')
-parser.add_argument('--input-path', type=str, defatult='/input', help='input files path')
+parser.add_argument('--input-path', type=str, default='/input', help='input files path')
 parser.add_argument('--output-path', type=str, default='/output', help='output files path')
 parser.add_argument('--detailed-log', action='store_true', default=False, help='Save detailed single bit flip log')
 args = parser.parse_args()
