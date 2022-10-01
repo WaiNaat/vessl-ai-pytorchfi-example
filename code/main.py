@@ -9,7 +9,6 @@ import datetime
 import vessl
 
 from torchvision import transforms
-from tqdm import tqdm
 
 from base_fault_injection import add_input_layer, neuron_single_bit_flip
 
@@ -115,10 +114,11 @@ else:
     layer_nums = range(base_fi_model.get_total_layers())
 
 # experiment
+print(f'Seed: {seed}')
 results = []
 error_logs = []
 
-for layer_num in tqdm(layer_nums):
+for layer_num in layer_nums:
     
     orig_correct_cnt = 0
     orig_corrupt_diff_cnt = 0
@@ -198,12 +198,9 @@ for layer_num in tqdm(layer_nums):
 
     # save result
     result = f'Layer #{layer_num}: {orig_corrupt_diff_cnt} / {orig_correct_cnt} = {orig_corrupt_diff_cnt / orig_correct_cnt * 100:.4f}%, ' + str(base_fi_model.layers_type[layer_num]).split(".")[-1].split("'")[0]
-    #print(result)
+    print(result)
     results.append(result)
     vessl.log({'Misclassification_rate': orig_corrupt_diff_cnt / orig_correct_cnt * 100})
-
-for result in results:
-    print(result)
 
 # save log file
 f = open(os.path.join(args.output_path, '_'.join([model_name, dataset, seed]) + '.txt'), 'w')
@@ -216,7 +213,7 @@ for result in results:
 f.close()
 
 if args.detailed_log:
-    f = open(os.path.join(args.output_path, '_'.join([model_name, dataset, seed]) + '_detailed.txt'), 'w')
+    f = open(os.path.join(args.output_path, '_'.join([model_name, dataset, str(seed)]) + '_detailed.txt'), 'w')
 
     for error_log in error_logs:
         f.write(error_log + '\n')
