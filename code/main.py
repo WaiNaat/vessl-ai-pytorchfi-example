@@ -3,6 +3,7 @@ import torchvision
 import random
 import copy
 import numpy as np
+import pandas as pd
 import os
 import argparse
 import datetime
@@ -38,8 +39,6 @@ layer_nums = str(os.environ.get('layer_nums', 'all'))
 
 if seed < 0:
     seed = int(datetime.datetime.now().timestamp())
-    os.environ['seed'] = str(seed)
-    vessl.log({'seed': seed})
 
 if bit_flip_pos < 0:
     bit_flip_pos = None
@@ -118,6 +117,8 @@ else:
 # experiment
 print(f'Seed: {seed}')
 results = []
+misclassification_rate = []
+layer_name = []
 error_logs = []
 
 for layer_num in layer_nums:
@@ -199,13 +200,20 @@ for layer_num in layer_nums:
                         error_logs.append('\n'.join(log))
 
     # save result
-    result = f'Layer #{layer_num}: {orig_corrupt_diff_cnt} / {orig_correct_cnt} = {orig_corrupt_diff_cnt / orig_correct_cnt * 100:.4f}%, ' + str(base_fi_model.layers_type[layer_num]).split(".")[-1].split("'")[0]
+    rate = orig_corrupt_diff_cnt / orig_correct_cnt * 100
+    result = f'Layer #{layer_num}: {orig_corrupt_diff_cnt} / {orig_correct_cnt} = {rate:.4f}%, ' + str(base_fi_model.layers_type[layer_num]).split(".")[-1].split("'")[0]
     print(result)
-    results.append(result)
-    vessl.log({'Misclassification_rate': orig_corrupt_diff_cnt / orig_correct_cnt * 100})
+    results.append(rate)
+    misclassification_rate.append(result)
+    layer_name.append(str(base_fi_model.layers_type[layer_num]).split(".")[-1].split("'")[0])
+    vessl.log(step=layer_num, payload={'Misclassification_rate': rate})
 
 # save log file
-f = open(os.path.join(args.output_path, '_'.join([model_name, dataset, str(seed)]) + '.txt'), 'w')
+# save overall log
+save_path = os.path.join(args.output_path, '_'.join([model_name, dataset, str(seed)])
+vessl.log({'seed': seed})
+
+f = open(save_path + '.txt'), 'w')
 
 f.write(base_fi_model.print_pytorchfi_layer_summary())
 f.write(f'\n\n===== Result =====\nSeed: {seed}\nSpecific bit flip position: {bit_flip_pos}\n')
@@ -214,10 +222,15 @@ for result in results:
 
 f.close()
 
+# save detailed log
 if args.detailed_log:
-    f = open(os.path.join(args.output_path, '_'.join([model_name, dataset, str(seed)]) + '_detailed.txt'), 'w')
+    f = open(save_path + '_detailed.txt'), 'w')
 
     for error_log in error_logs:
         f.write(error_log + '\n')
 
     f.close()
+
+# save misclassification rate
+data = pd.DataFrame([layer_name, misclassification_rate]).transpose()
+data.to_csv(save_path + '.csv')
