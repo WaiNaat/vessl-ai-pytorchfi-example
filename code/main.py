@@ -39,6 +39,7 @@ layer_nums = str(os.environ.get('layer_nums', 'all'))
 if seed < 0:
     seed = int(datetime.datetime.now().timestamp())
     os.environ['seed'] = str(seed)
+    vessl.log({'seed': seed})
 
 if bit_flip_pos < 0:
     bit_flip_pos = None
