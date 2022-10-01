@@ -210,10 +210,10 @@ for layer_num in layer_nums:
 
 # save log file
 # save overall log
-save_path = os.path.join(args.output_path, '_'.join([model_name, dataset, str(seed)])
+save_path = os.path.join(args.output_path, '_'.join([model_name, dataset, str(seed)]))
 vessl.log({'seed': seed})
 
-f = open(save_path + '.txt'), 'w')
+f = open(save_path + '.txt', 'w')
 
 f.write(base_fi_model.print_pytorchfi_layer_summary())
 f.write(f'\n\n===== Result =====\nSeed: {seed}\nSpecific bit flip position: {bit_flip_pos}\n')
@@ -224,7 +224,7 @@ f.close()
 
 # save detailed log
 if args.detailed_log:
-    f = open(save_path + '_detailed.txt'), 'w')
+    f = open(save_path + '_detailed.txt', 'w')
 
     for error_log in error_logs:
         f.write(error_log + '\n')
