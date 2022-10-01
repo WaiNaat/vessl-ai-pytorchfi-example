@@ -94,7 +94,7 @@ else:
     raise AssertionError(f'Invalid dataset name {dataset}')
 
 # make fault injection base model
-base_fi_model = custom_single_bit_flip(
+base_fi_model = neuron_single_bit_flip(
     model = copy.deepcopy(model),
     batch_size = batch_size, 
     input_shape = [channels, img_size, img_size],
