@@ -111,6 +111,7 @@ if layer_nums != 'all':
     layer_nums.sort()
     while layer_nums and layer_nums[-1] >= base_fi_model.get_total_layers():
         layer_nums.pop()
+    print(layer_nums)
 else:
     layer_nums = range(base_fi_model.get_total_layers())
 
