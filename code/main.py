@@ -67,6 +67,9 @@ model = torch.hub.load("chenyaofo/pytorch-cifar-models", dataset + '_' + model_n
 model = add_input_layer(model)
 model.to(device)
 
+print(model)
+print()
+
 # preprocess data
 # Transform statics from https://cdn.jsdelivr.net/gh/chenyaofo/pytorch-cifar-models@logs/logs/cifar10/vgg11_bn/default.log
 dataloader = None
@@ -104,6 +107,7 @@ base_fi_model = neuron_single_bit_flip(
 )
 
 print(base_fi_model.print_pytorchfi_layer_summary())
+print()
 
 # fault injection layer range setting
 if layer_nums != 'all':
