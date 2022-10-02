@@ -207,6 +207,7 @@ for layer_num in layer_nums:
     misclassification_rate.append(rate)
     layer_name.append(str(base_fi_model.layers_type[layer_num]).split(".")[-1].split("'")[0])
     vessl.log(step=layer_num, payload={'Misclassification_rate': rate})
+    vessl.log(step=layer_num, payload={str(base_fi_model.layers_type[layer_num]).split(".")[-1].split("'")[0]: rate})
 
 # save log file
 # save overall log
