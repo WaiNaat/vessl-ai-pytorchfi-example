@@ -66,7 +66,7 @@ random.seed(seed)
 if dataset in ['cifar10', 'cifar100']:
     model = torch.hub.load("chenyaofo/pytorch-cifar-models", dataset + '_' + model_name, pretrained=True)
 elif dataset == 'imagenet':
-    model = getattr(torchvision.models, model_name)(weights='DEFAULT')
+    model = getattr(torchvision.models, model_name)(pretrained=True)
 else:
     raise AssertionError(f'Invalid dataset name {dataset}')
 
