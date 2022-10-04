@@ -24,6 +24,7 @@ parser = argparse.ArgumentParser(description='PyTorchFI single bit flip example 
 parser.add_argument('--input-path', type=str, default='/input', help='input files path')
 parser.add_argument('--output-path', type=str, default='/output', help='output files path')
 parser.add_argument('--detailed-log', action='store_true', default=False, help='Save detailed single bit flip log')
+parser.add_argument('--sweep', action='store_true', default=False, help='True if you are using sweep. The overall result will be stored here.')
 args = parser.parse_args()
 
 # vessl.ai hyperparameters
@@ -237,5 +238,15 @@ if args.detailed_log:
     f.close()
 
 # save misclassification rate
-data = pd.DataFrame([layer_name, misclassification_rate]).transpose()
+data = pd.DataFrame({'name': layer_name, 'rate': misclassification_rate})
 data.to_csv(save_path + '.csv')
+
+# save sweep log
+if args.sweep:
+    save_path = os.path.join(args.output_path, f'{model_name}_{dataset}_sweep.csv')
+    try:
+        data = pd.read_csv(save_path)
+    except:
+        data = pd.DataFrame({'layer': [i for i in range(len(layer_name))], 'name': layer_name})
+    data[seed] = misclassification_rate
+    data.to_csv(save_path, index=False)
