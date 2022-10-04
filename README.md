@@ -29,8 +29,8 @@ Available ones are
 ## Hyperparameters
 | Key | Default value | Description | Example |
 |:---:|:-----:|:-----------:|:--------|
-|model_name|`vgg19_bn`|Model names at [chenyaofo/pytorch-cifar-models](https://github.com/chenyaofo/pytorch-cifar-models)|`vgg11_bn`|     
-|dataset|`cifar10`|`cifar10` or `cifar100`|`cifar100`|
+|model_name|`vgg19_bn`|Model names at [chenyaofo/pytorch-cifar-models](https://github.com/chenyaofo/pytorch-cifar-models) or at [torchvision.models](https://pytorch.org/vision/stable/models.html) if dataset is imagenet|`vgg11_bn`|     
+|dataset|`cifar10`|`cifar10` or `cifar100` or `imagenet`|`cifar100`|
 |seed|`-1`|Seed value. Uses current time value if given seed is negative integer.|`1234`|
 |batch_size|`256`|Batch size.||
 |img_size|`32`|Input image size.||

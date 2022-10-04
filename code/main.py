@@ -63,7 +63,13 @@ np.random.seed(seed)
 random.seed(seed)
 
 # load model
-model = torch.hub.load("chenyaofo/pytorch-cifar-models", dataset + '_' + model_name, pretrained=True)
+if dataset in ['cifar10', 'cifar100']:
+    model = torch.hub.load("chenyaofo/pytorch-cifar-models", dataset + '_' + model_name, pretrained=True)
+elif dataset == 'imagenet':
+    model = getattr(torchvision.models, model_name)(weights='DEFAULT')
+else:
+    raise AssertionError(f'Invalid dataset name {dataset}')
+
 model = add_input_layer(model)
 model.to(device)
 
@@ -81,7 +87,6 @@ if dataset == 'cifar10':
         ]
     )
     data = torchvision.datasets.CIFAR10(root=args.input_path, train=False, download=True, transform=transform)
-    dataloader = torch.utils.data.DataLoader(data, batch_size=batch_size, shuffle=False, num_workers=0, drop_last=True)
 
 elif dataset == 'cifar100':
     transform = transforms.Compose(
@@ -91,10 +96,23 @@ elif dataset == 'cifar100':
         ]
     )
     data = torchvision.datasets.CIFAR100(root=args.input_path, train=False, download=True, transform=transform)
-    dataloader = torch.utils.data.DataLoader(data, batch_size=batch_size, shuffle=False, num_workers=0, drop_last=True)
+
+elif dataset == 'imagenet': # https://github.com/pytorch/vision/blob/main/torchvision/transforms/_presets.py#L38
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Resize(256, interpolation=transforms.InterpolationMode.BILINEAR),
+            transforms.CenterCrop(224),
+            transforms.ConvertImageDtype(torch.float),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ]
+    )
+    data = torchvision.datasets.ImageNet(root=args.input_path, split='val', transform=transform)
 
 else:
     raise AssertionError(f'Invalid dataset name {dataset}')
+
+dataloader = torch.utils.data.DataLoader(data, batch_size=batch_size, shuffle=False, num_workers=0, drop_last=True)
 
 # make fault injection base model
 base_fi_model = neuron_single_bit_flip(
